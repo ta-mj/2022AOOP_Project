@@ -7,27 +7,28 @@ public class Country {
     private ArrayList<Airport> myAirport;//나라에 포함된 국가
     private int numAirport;
     public Country(String en,String kn){
-        eng_name = en;
-        kor_name = kn;
-        numAirport = 0;
-        myAirport = new ArrayList<>();
+        this.eng_name = en;
+        this.kor_name = kn;
+        this.numAirport = 0;
+        this.myAirport = new ArrayList<>();
     }
     public void setEngName(String en){
-        eng_name = en;
+        this.eng_name = en;
     }
     public void setKorName(String kn){
-        kor_name = kn;
+        this.kor_name = kn;
     }
     public void setMyAirport(Airport a){
-        myAirport.add(a);
+        this.myAirport.add(a);
         a.setMyCountry(this);
-        myContinent.addAirport();
+        this.myContinent.addAirport();
     }
     public void setMyContinent(Continent cn){
-        myContinent = cn;
+        this.myContinent = cn;
     }
-    public String getEngName(){ return eng_name; }
-    public String getKorName(){ return kor_name; }
-    public ArrayList<Airport> getAllAirport(){ return myAirport; }
-    public Airport getOneAirport(int position){ return myAirport.get(position);}
+    public String getEngName(){ return this.eng_name; }
+    public String getKorName(){ return this.kor_name; }
+    public ArrayList<Airport> getAllAirport(){ return this.myAirport; }
+    public Airport getOneAirport(int position){ return this.myAirport.get(position);}
+    public int getNumAirport(){ return this.numAirport; }
 }

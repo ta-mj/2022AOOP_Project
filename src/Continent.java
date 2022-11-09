@@ -5,37 +5,38 @@ public class Continent {
     private int numCountry;//이 대륙에 포함된 국가의 수
     private int numAirport;// 이 대륙에 포함된 공항의 수
     public Continent(String n){
-        name = n;
-        numCountry = 0;
-        numAirport = 0;
-        myCountry = new ArrayList<>();
+        this.name = n;
+        this.numCountry = 0;
+        this.numAirport = 0;
+        this.myCountry = new ArrayList<>();
     }
     public void setName(String n){
         this.name = n;
     }
     public void setMyCountry(Country c){
-        myCountry.add(c);
+        this.myCountry.add(c);
         c.setMyContinent(this);
-        numCountry++;
+        this.numCountry++;
     }
     public void addAirport() {
-        numAirport++;
+        this.numAirport++;
     }
     public String getName(){
         return this.name;
     }
     public ArrayList<Country> getAllCountries(){
-        return myCountry;
+        return this.myCountry;
     }
     public Country getOneCountry(int position){
-        return myCountry.get(position);
+        return this.myCountry.get(position);
     }
     public int getCountryPosition(String s) {
         for(int i = 0 ; i < myCountry.size(); i++) {
-            if(myCountry.get(i).getEngName().equals(s) == true) {
+            if(this.myCountry.get(i).getEngName().equals(s) == true) {
                 return i;
             }
         }
         return -1;
     }
+    public int getNumCountry(){ return this.numCountry; }
 }

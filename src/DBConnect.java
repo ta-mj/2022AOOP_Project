@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DBConnect {
     public static Connection makeConnection(){
-        //String url = "jdbc:mysql://localhost/projectdata?characterEncoding=UTF-8&serverTimezone=UTC";
-        String url = "jdbc:mysql://127.0.0.1:3306";
+        String url = "jdbc:mysql://localhost/projectdata?characterEncoding=UTF-8&serverTimezone=UTC";
+        //String url = "jdbc:mysql://127.0.0.1:3306";
 
         Connection con = null;
         try{
@@ -21,17 +21,5 @@ public class DBConnect {
             System.out.println("SQLException: " + ex.getMessage());
         }
         return con;
-    }
-    public static void main(String[] args) throws SQLException{
-        Connection con = makeConnection();
-        String sql = "SELECT * FROM data";
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery();
-        int i = 0;
-        while(rs.next()) {
-        	System.out.println(rs.getString(2));
-        	i++;
-        }
-        System.out.println(i);
     }
 }

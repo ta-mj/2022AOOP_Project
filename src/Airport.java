@@ -12,12 +12,12 @@ public class Airport {
         this.air_code1 = ac1;
         this.air_code2 = ac2;
     }
-    public void setEngName(String s){ eng_name = s; }
-    public void setKorName(String s){ kor_name = s; }
-    public void setCityName(String s){ city_name = s; }
-    public void setAirCode1(String s){ air_code1 = s; }
-    public void setAirCode2(String s){ air_code2 = s; }
-    public void setMyCountry(Country c) { myCountry = c; }
+    public void setEngName(String s){ this.eng_name = s; }
+    public void setKorName(String s){ this.kor_name = s; }
+    public void setCityName(String s){ this.city_name = s; }
+    public void setAirCode1(String s){ this.air_code1 = s; }
+    public void setAirCode2(String s){ this.air_code2 = s; }
+    public void setMyCountry(Country c) { this.myCountry = c; }
     public String getEngName(){ return this.eng_name; }
     public String getKorName(){ return this.kor_name; }
     public String getCityName(){ return this.city_name; }
