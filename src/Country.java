@@ -1,7 +1,5 @@
-package Project;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 public class Country {
     private String eng_name;//영문 국가명
     private String kor_name;//한글 국가명

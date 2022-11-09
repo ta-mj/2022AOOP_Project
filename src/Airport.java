@@ -1,5 +1,3 @@
-package Project;
-
 public class Airport {
     private String eng_name;//영문 공항명
     private String kor_name;//한글 공항명

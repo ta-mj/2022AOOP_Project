@@ -1,7 +1,5 @@
-package Project;
 import java.util.ArrayList;
-
-public class Continent{
+public class Continent {
     private String name;//대륙 이름
     private ArrayList<Country> myCountry;//이 대륙에 포함된 국가
     private int numCountry;//이 대륙에 포함된 국가의 수
@@ -9,7 +7,7 @@ public class Continent{
     public Continent(String n){
         name = n;
         numCountry = 0;
-        numAirport = 0; 
+        numAirport = 0;
         myCountry = new ArrayList<>();
     }
     public void setName(String n){
@@ -21,7 +19,7 @@ public class Continent{
         numCountry++;
     }
     public void addAirport() {
-    	numAirport++;
+        numAirport++;
     }
     public String getName(){
         return this.name;
@@ -33,13 +31,11 @@ public class Continent{
         return myCountry.get(position);
     }
     public int getCountryPosition(String s) {
-    	for(int i = 0 ; i < myCountry.size(); i++) {
-    		if(myCountry.get(i).getEngName().equals(s) == true) {
-    			return i;
-    		}
-    	}
-    	return -1;
+        for(int i = 0 ; i < myCountry.size(); i++) {
+            if(myCountry.get(i).getEngName().equals(s) == true) {
+                return i;
+            }
+        }
+        return -1;
     }
-
-
 }

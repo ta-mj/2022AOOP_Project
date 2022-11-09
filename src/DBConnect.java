@@ -1,15 +1,13 @@
-package Project;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.mysql.cj.xdevapi.PreparableStatement;
-
 public class DBConnect {
     public static Connection makeConnection(){
-        String url = "jdbc:mysql://localhost/projectdata?characterEncoding=UTF-8&serverTimezone=UTC";
+        //String url = "jdbc:mysql://localhost/projectdata?characterEncoding=UTF-8&serverTimezone=UTC";
+        String url = "jdbc:mysql://127.0.0.1:3306";
 
         Connection con = null;
         try{
@@ -24,16 +22,16 @@ public class DBConnect {
         }
         return con;
     }
-//    public static void main(String[] args) throws SQLException{
-//        Connection con = makeConnection();
-//        String sql = "SELECT * FROM data";
-//        PreparedStatement pstmt = con.prepareStatement(sql);
-//        ResultSet rs = pstmt.executeQuery();
-//        int i = 0;
-//        while(rs.next()) {
-//        	System.out.println(rs.getString(2));
-//        	i++;
-//        }
-//        System.out.println(i);
-//    }
+    public static void main(String[] args) throws SQLException{
+        Connection con = makeConnection();
+        String sql = "SELECT * FROM data";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        int i = 0;
+        while(rs.next()) {
+        	System.out.println(rs.getString(2));
+        	i++;
+        }
+        System.out.println(i);
+    }
 }
