@@ -21,6 +21,7 @@ public class Country {
     public void setMyAirport(Airport a){
         this.myAirport.add(a);
         a.setMyCountry(this);
+        this.numAirport++;
         this.myContinent.addAirport();
     }
     public void setMyContinent(Continent cn){

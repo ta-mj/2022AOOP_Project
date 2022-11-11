@@ -38,16 +38,9 @@ public class ProjectMain {
     }
     public static void main(String[] args)throws SQLException {
         getData();
-        Continent c = allContinent.get("유럽");
-        for (int i = 0; i < c.getAllCountries().size(); i++) {
-            System.out.println(c.getOneCountry(i).getKorName() + ": " + c.getOneCountry(i).getAllAirport().size());
-//            for(int j = 0 ; j < c.getOneCountry(i).getAllAirport().size(); j++){
-//
-//            }
+        // for loop (entrySet())
+        for (Map.Entry<String, Continent> entrySet : allContinent.entrySet()) {
+            System.out.println(entrySet.getKey() + " : " + entrySet.getValue().getNumCountry());
         }
-//        // for loop (entrySet())
-//        for (Map.Entry<String, Continent> entrySet : allContinent.entrySet()) {
-//            System.out.println(entrySet.getKey() + " : " + entrySet.getValue().getNumCountry());
-//        }
     }
 }
