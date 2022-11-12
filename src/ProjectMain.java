@@ -12,6 +12,16 @@ import javax.swing.*;
 
 public class ProjectMain extends JFrame {
     private static HashMap<String, Continent> allContinent = new HashMap<>();
+    private static Continent selectedContinent;
+    private static Country selectedCountry;
+    private static Airport selectedAirport;
+    public static void setSelectedContinent(Continent c){ selectedContinent = c; }
+    public static void setSelectedCountry(Country c){ selectedCountry = c; }
+    public static void setSelectedAirport(Airport a){ selectedAirport = a; }
+    public static Continent getContinent(String s){ return allContinent.get(s); }
+    public static Continent getSelectedContinent(){ return selectedContinent; }
+    public static Country getSelectedCountry(){ return selectedCountry; }
+    public static Airport getSelectedAirport(){ return selectedAirport; }
 
     public static void getData() throws SQLException {
         Connection con = DBConnect.makeConnection();
@@ -43,7 +53,6 @@ public class ProjectMain extends JFrame {
 
     public static void main(String[] args) throws SQLException {
         getData();
-        Continent c = allContinent.get("유럽");
         new ShowContinent();
     }
 }

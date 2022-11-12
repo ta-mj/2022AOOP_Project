@@ -7,8 +7,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainFrame extends JFrame { //메인 프레임
+    private String conName;
     public MainFrame(String title) throws IOException {
-        super(title);                            //타이틀
+        super(title);//타이틀
+        conName = title;
+        ProjectMain.setSelectedContinent(ProjectMain.getContinent(title));
         setDefaultCloseOperation(EXIT_ON_CLOSE); //끄기버튼 활성화
         setSize(1000, 600);          //크기
         setLayout(new GridLayout());
@@ -18,20 +21,18 @@ public class MainFrame extends JFrame { //메인 프레임
     }
     class ConPanel extends JPanel {
         public ConPanel() throws IOException { //대륙 사진 판넬
+            String src = "C:/Users/USER/IdeaProjects/AOOP2022_Project/src/image/" + conName + ".png";
             //File file = new File("C:/Users/우성/Desktop/고급객체/AOP/2022AOOP_Project/public/test.png"); //사진 경로
-            //BufferedImage img = ImageIO.read(file); //가상에 이미지 로드
-            //JLabel lb = new JLabel(new ImageIcon(img)); //라벨에 추가
-            //add(lb);                                    //라벨 추가
+            File file = new File(src);
+            BufferedImage img = ImageIO.read(file); //가상에 이미지 로드
+            JLabel lb = new JLabel(new ImageIcon(img)); //라벨에 추가
+            add(lb);                                    //라벨 추가
             this.setSize(100, 200);
             this.setLocation(200,200);
-            //this.setVisible(true);
+            this.setVisible(true);
         }
     }
 
-//    public static void main(String[] args) throws IOException {
-//        MainFrame frame = new MainFrame("그림판");
-//        frame.setVisible(true);
-//    }
 }
 
 class LookUpPanel extends JPanel{ //검색, 정렬, 조회 통합 판넬
@@ -52,7 +53,10 @@ class BottomPanel extends JPanel{ //검색 하단 판넬
     public BottomPanel(){
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); //가로박스정렬
         add(new JScrollPane(new ConList() ) );                  //대륙, 국가 리스트 스크롤 가능하게 추가
-        String[] countrys = {"한국", "일본", "중국"};
+        String[] countrys = new String[ProjectMain.getSelectedContinent().getAllCountries().size()];
+        for(int i = 0 ; i < ProjectMain.getSelectedContinent().getAllCountries().size() ; i++){
+            countrys[i] = ProjectMain.getSelectedContinent().getOneCountry(i).getKorName();
+        }
         add(new JScrollPane(new CountryList(countrys) ) );
         add(new InfoPanel());
     }
@@ -68,6 +72,13 @@ class ConList extends JList{ //대륙 리스트
     public static String[] cons = {"유럽", "중동", "아시아", "아프리카", "오세아니아", "북아메리카", "남아메리카"};
     public ConList(){
         super(cons);
+    }
+}
+class AirportList extends JList{
+    String[] myAirport;
+    public AirportList(String[] airports){
+        super(airports);
+        this.myAirport = airports;
     }
 }
 
