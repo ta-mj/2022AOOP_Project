@@ -3,7 +3,10 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +14,18 @@ import java.util.HashSet;
 public class MainFrame extends JFrame { //메인 프레임
     private static String currentconName;
     private static Continent currentCont;
+
+    //국제 / 국내 공항 radio 버튼 변수
+    JRadioButton allRBtn = new JRadioButton("전체"); //JRadioButton 생성
+    JRadioButton interRBtn = new JRadioButton("국제");
+    JRadioButton domRBtn = new JRadioButton("국내");
+
+    //국제 / 국내 공항 radio 버튼 관련 상수
+    private final int all = 0;
+    private final int international = 1;
+    private final int domestic = 2;
+    //국제 / 국내 공항 상태
+    private int inter_all_dom_status = all;
     public static String[] cons = {"유럽", "중동", "아시아", "아프리카", "대양주", "북미", "중남미"};
 
     public static HashMap<String, Image> conImage;
@@ -25,7 +40,7 @@ public class MainFrame extends JFrame { //메인 프레임
     private static DefaultListModel<String> model = new DefaultListModel<>();
 
     public MainFrame(String title) throws IOException {
-        super("공항 통항 검색");//타이틀
+        super("공항 통합 검색");//타이틀
         currentconName = title;
         setImage();
         ProjectMain.setSelectedContinent(ProjectMain.getContinent(title));
@@ -132,6 +147,8 @@ public class MainFrame extends JFrame { //메인 프레임
                                     System.out.println(str + " 나라 이름임");
                                     findKey = true;
                                     // 나라 선택된다는 가정
+                                    continentList.setSelectedValue(element,true);
+                                    countryList.setSelectedValue(str,true);
                                 } else {
                                     if (hm.get(element).getmyCountry(c) != null) {
                                         for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
@@ -140,6 +157,9 @@ public class MainFrame extends JFrame { //메인 프레임
                                                 System.out.println(str + " 공항 이름임");
                                                 findKey = true;
                                                 //공항 선택된다는 가정
+                                                continentList.setSelectedValue(element,true);
+                                                countryList.setSelectedValue(c.getKorName(),true);
+                                                airportList.setSelectedValue(str,true);
                                             }
                                         }
                                     }
@@ -185,6 +205,7 @@ public class MainFrame extends JFrame { //메인 프레임
             add(countryL);
             add(apL);
 
+            SwingUtilities.updateComponentTreeUI(this);
             setVisible(true);
         }
     }
@@ -276,13 +297,27 @@ public class MainFrame extends JFrame { //메인 프레임
 
         public void setAirportList(Country c) {
             airportName.removeAllElements();
-            String[] airport = new String[c.getAllAirport().size()];
+            ArrayList<String> airport = new ArrayList<>();
             for (int i = 0; i < c.getAllAirport().size(); i++) {
-                airport[i] = c.getOneAirport(i).getKorName();
+                if(inter_all_dom_status == all){
+                    airport.add(c.getOneAirport(i).getKorName());
+                }
+                else if(inter_all_dom_status == international){
+                    if(c.getOneAirport(i).isInternational()){
+                        airport.add(c.getOneAirport(i).getKorName());
+                    }
+                }
+                else if(inter_all_dom_status == domestic){
+                    if(!c.getOneAirport(i).isInternational()){
+                        airport.add(c.getOneAirport(i).getKorName());
+                    }
+                }
             }
-            Arrays.sort(airport); //나라 정렬
-            for (int i = 0; i < airport.length; i++) {
-                airportName.addElement(airport[i]);
+            String[] airport_str = new String[airport.size()];
+            airport_str = airport.toArray(airport_str);
+            Arrays.sort(airport_str); //나라 정렬
+            for (int i = 0; i < airport_str.length; i++) {
+                airportName.addElement(airport_str[i]);
             }
             setModel(airportName);
         }
@@ -301,10 +336,10 @@ public class MainFrame extends JFrame { //메인 프레임
         Airport myAirport; //생성자 함수에 Airport 정보 받는 걸로 후에 수정
 
         public InfoPanel() {
-            JRadioButton allRBtn = new JRadioButton("전체"); //JRadioButton 생성
-            JRadioButton interRBtn = new JRadioButton("국제");
-            JRadioButton domRBtn = new JRadioButton("국내");
             ButtonGroup rGroup = new ButtonGroup();
+            allRBtn.addItemListener(new RadioButtonListener());
+            interRBtn.addItemListener(new RadioButtonListener());
+            domRBtn.addItemListener(new RadioButtonListener());
             rGroup.add(allRBtn);
             rGroup.add(interRBtn);
             rGroup.add(domRBtn);
@@ -315,6 +350,30 @@ public class MainFrame extends JFrame { //메인 프레임
         }
 
         //그룹에 그룹화시킬 버튼들을 추가
+    }
+    class RadioButtonListener implements ItemListener{
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if(e.getStateChange()==ItemEvent.DESELECTED){
+                return;
+            }
+            if(allRBtn.isSelected()){
+                inter_all_dom_status = all;
+                System.out.println(inter_all_dom_status);
+                airportList.airportName.removeAllElements();
+            }
+            else if(interRBtn.isSelected()){
+                inter_all_dom_status = international;
+                System.out.println(inter_all_dom_status);
+            }
+            else if(domRBtn.isSelected()){
+                inter_all_dom_status = domestic;
+                System.out.println(inter_all_dom_status);
+            }
+            if(ProjectMain.getSelectedCountry() != null)
+                airportList.setAirportList(ProjectMain.getSelectedCountry());
+        }
     }
 
 }
