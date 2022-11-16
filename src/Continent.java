@@ -32,11 +32,18 @@ public class Continent {
     }
     public int getCountryPosition(String s) {
         for(int i = 0 ; i < myCountry.size(); i++) {
-            if(this.myCountry.get(i).getEngName().equals(s) == true) {
+            if(this.myCountry.get(i).getKorName().equals(s) == true) {
                 return i;
             }
         }
         return -1;
     }
     public int getNumCountry(){ return this.numCountry; }
+
+    public Country getmyCountry(Country c) {
+        if(this.myCountry.contains(c)){
+            return c;
+        }
+        return null;
+    }
 }

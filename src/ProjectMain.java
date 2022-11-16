@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.swing.*;
 
 public class ProjectMain extends JFrame {
-    private static HashMap<String, Continent> allContinent = new HashMap<>();
+    public static HashMap<String, Continent> allContinent = new HashMap<>();
     private static Continent selectedContinent;
     private static Country selectedCountry;
     private static Airport selectedAirport;
