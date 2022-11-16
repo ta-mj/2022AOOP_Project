@@ -25,7 +25,7 @@ public class ProjectMain extends JFrame {
 
     public static void getData() throws SQLException {
         Connection con = DBConnect.makeConnection();
-        String sql = "SELECT * FROM 국토교통부_세계공항_정보_20211231";
+        String sql = "SELECT * FROM data";
         PreparedStatement pstmt = con.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery();
         while (rs.next()) {
