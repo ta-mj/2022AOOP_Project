@@ -11,30 +11,42 @@ import java.util.HashSet;
 public class MainFrame extends JFrame { //메인 프레임
     private static String currentconName;
     private static Continent currentCont;
-    public static String[] cons = {"유럽", "중동", "아시아", "아프리카", "대양주", "북미", "남미"};
-    private static JList<String> continentList;
-    private static JList<String> countryList;
+    public static String[] cons = {"유럽", "중동", "아시아", "아프리카", "대양주", "북미", "중남미"};
+
+    public static HashMap<String,Image> conImage;
+    private ConPanel continentImagePanel;
+
+    private static ConList continentList;
+    private static CountryList countryList;
+    private static AirportList airportList;
 
     private static Image img;
     private static JLabel lb;
     private static DefaultListModel<String> model = new DefaultListModel<>();
 
     public MainFrame(String title) throws IOException {
-        super(title);//타이틀
+        super("공항 통항 검색");//타이틀
         currentconName = title;
+        setImage();
         ProjectMain.setSelectedContinent(ProjectMain.getContinent(title));
         setDefaultCloseOperation(EXIT_ON_CLOSE); //끄기버튼 활성화
         setSize(1000, 650);          //크기
         setLayout(null);
         setLocationRelativeTo(null);//창이 가운데 나오게
-        ConPanel c = new ConPanel(currentconName);
-        c.setSize(500, 550);
-        c.setLocation(0, 35);
-        add(c);
+        //List 설정
+        continentList = new ConList(ProjectMain.getSelectedContinent());
+        countryList = new CountryList(ProjectMain.getSelectedContinent());
+        airportList = new AirportList();
+        //Panel 설정
+        continentImagePanel = new ConPanel(currentconName);
+        continentImagePanel.setSize(500, 550);
+        continentImagePanel.setLocation(0, 35);
+        add(continentImagePanel);
         LookUpPanel l = new LookUpPanel(ProjectMain.getSelectedContinent());
         l.setSize(450, 630);
         l.setLocation(510, 0);
         add(l);
+        //버튼 설정
         JButton btnBack = new JButton();
         btnBack.setText("뒤로가기");
         btnBack.setLocation(10, 5);
@@ -46,18 +58,28 @@ public class MainFrame extends JFrame { //메인 프레임
         add(btnBack);
         setVisible(true);
     }
+    public void setImage(){
+        conImage = new HashMap<>();
+        for(int i = 0 ; i < cons.length ; i++){
+            System.out.println(cons[i]);
+            conImage.put(cons[i], new ImageIcon(MainFrame.class.getResource("./image/" + cons[i] + ".png")).getImage());
+        }
+    }
 
 
     class ConPanel extends JPanel {
+        @Override
+        public void paint(Graphics g) {
+            g.drawImage(conImage.get(currentconName), 0, 0, null);
+        }
 
         public ConPanel(String cont) throws IOException { //대륙 사진 판넬
             currentconName = cont;
             showConPanel();
         }
-
         public void showConPanel() {
             setVisible(false);
-            img = new ImageIcon(MainFrame.class.getResource("./image/" + currentconName + ".png")).getImage();//배경이미지
+            img = conImage.get(currentconName);
             lb = new JLabel(new ImageIcon(img)); //라벨에 추가
             add(lb);                                    //라벨 추가
             setSize(100, 200);
@@ -69,9 +91,19 @@ public class MainFrame extends JFrame { //메인 프레임
 
     class LookUpPanel extends JPanel { //검색, 정렬, 조회 통합 판넬
         public LookUpPanel(Continent c) {
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); //세로 박스정렬
-            add(new SearchPanel());
-            add(new BottomPanel(c));
+            setLayout(null); //세로 박스정렬
+            SearchPanel searchPanel = new SearchPanel();
+            searchPanel.setLocation(800,200);
+            searchPanel.setSize(200,100);
+            add(searchPanel);
+            InfoPanel infoPanel = new InfoPanel();
+            infoPanel.setLocation(800,250);
+            infoPanel.setSize(200,100);
+            add(infoPanel);
+            BottomPanel bottomPanel = new BottomPanel(c);
+            bottomPanel.setLocation(510,300);
+            bottomPanel.setSize(500,400);
+            add(bottomPanel);
         }
     }
 
@@ -134,82 +166,118 @@ public class MainFrame extends JFrame { //메인 프레임
         public BottomPanel(Continent c) {
             setVisible(false);
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); //가로박스정렬
-            add(new JScrollPane(new ConList(c)));                  //대륙, 국가 리스트 스크롤 가능하게 추가
-            setCountryList(c);
+            add(new JScrollPane(continentList));                  //대륙, 국가 리스트 스크롤 가능하게 추가
+            countryList.setCountryList(c);
             add(new JScrollPane(countryList));
-            add(new InfoPanel());
+            add(new JScrollPane(airportList));
 
             SwingUtilities.updateComponentTreeUI(this);
             setVisible(true);
         }
     }
 
-    public static void setCountryList(Continent c) {
-        String[] country = new String[c.getAllCountries().size()];
-        for (int i = 0; i < c.getAllCountries().size(); i++) {
-            country[i] = c.getOneCountry(i).getKorName();
-        }
-        HashSet<String> hashSet = new HashSet<>(Arrays.asList(country)); // 중복 제거용 set 선언
-
-        String[] resultArr = hashSet.toArray(new String[0]);
-        Arrays.sort(resultArr); //나라 정렬
-
-        for (int i = 0; i < resultArr.length; i++) {
-            model.addElement(resultArr[i]);
-        }
-        countryList = new JList<>(model);
-    }
-
-    class CountryList extends JList { //나라 리스트
-        String[] myCountrys; //나중에 대륙 선택에 따라 받아올 국가명 문자열 배열
-
-        public CountryList(Continent c) {
-            super();
-//            this.myCountrys = countrys;
-            setCountryList(c);
-//            add(countryList);
-        }
-    }
-
     class ConList extends JList implements ListSelectionListener { //대륙 리스트
-
-
-        private int index;
-
         public ConList(Continent c) {
             super(cons);
             currentCont = c;
             currentconName = c.getName();
             addListSelectionListener(this);
             this.setLayout(new BorderLayout());
-
-
         }
 
         // BottomPanel : 검색 하단 패널 일단 여기 나라 리스트 들어가있음, ConPanel : 대륙 이미지, ConList : 대륙 리스트
         @Override
         public void valueChanged(ListSelectionEvent e) { // 대륙 리스트 클릭시 대륙 이미지 변화 및 나라 리스트 변화, 각 Panel들을 다시 불러오면 될듯한데 왜 안되징
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
+                //나라 및 공항 리스트 초기화
+                countryList.countryName.removeAllElements();
+                countryList.setModel(countryList.countryName);
+                airportList.airportName.removeAllElements();
+                airportList.setModel(airportList.airportName);
+
                 System.out.println("selected :" + this.getSelectedValue());
                 currentconName = this.getSelectedValue().toString();
+                System.out.println(currentconName);
                 ProjectMain.setSelectedContinent(ProjectMain.getContinent(currentconName));
                 currentCont = ProjectMain.getSelectedContinent();
-                model.removeAllElements();
-                setCountryList(currentCont);
-                img= new ImageIcon(MainFrame.class.getResource("./image/" + currentconName + ".png")).getImage();//배경이미지
-                lb = new JLabel(new ImageIcon(img)); //라벨에 추가
-                lb.repaint();
-
+                continentImagePanel.repaint();
+                countryList.setCountryList(currentCont);
             }
         }
     }
 
-    class AirportList extends JList {
-        String[] myAirport;
+    class CountryList extends JList implements ListSelectionListener{ //나라 리스트
+        DefaultListModel<String> countryName;
 
-        public AirportList(String[] airports) {
-            super(airports);
-            this.myAirport = airports;
+        public CountryList(Continent c) {
+            super();
+            countryName = new DefaultListModel<>();
+            setCountryList(c);
+            addListSelectionListener(this);
+            this.setLayout(new BorderLayout());
+        }
+        @Override
+        public void valueChanged(ListSelectionEvent e) { // 나라 리스트 선택 시 공항 리스트 불러오기
+            if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
+                System.out.println("selected :" + this.getSelectedValue());
+                if(this.getSelectedValue() != null) {
+                    String countryStr = this.getSelectedValue().toString();
+                    System.out.println(countryStr);
+                    for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
+                        if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
+                            ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
+                            System.out.println(ProjectMain.getSelectedCountry().getKorName());
+                            break;
+                        } else {
+
+                        }
+                    }
+                    airportList.setAirportList(ProjectMain.getSelectedCountry());
+                }
+
+            }
+        }
+        public void setCountryList(Continent c){
+            countryName.removeAllElements();
+            String[] country = new String[c.getAllCountries().size()];
+            for (int i = 0; i < c.getAllCountries().size(); i++) {
+                country[i] = c.getOneCountry(i).getKorName();
+            }
+            Arrays.sort(country); //나라 정렬
+            for (int i = 0; i < country.length; i++) {
+                countryName.addElement(country[i]);
+            }
+            setModel(countryName);
+        }
+    }
+
+    class AirportList extends JList implements ListSelectionListener{
+        DefaultListModel<String> airportName;
+
+        public AirportList() {
+            super();
+            airportName = new DefaultListModel<>();
+        }
+
+        public void setAirportList(Country c){
+            airportName.removeAllElements();
+            String[] airport = new String[c.getAllAirport().size()];
+            for (int i = 0; i < c.getAllAirport().size(); i++) {
+                airport[i] = c.getOneAirport(i).getKorName();
+            }
+            Arrays.sort(airport); //나라 정렬
+            for (int i = 0; i < airport.length; i++) {
+                airportName.addElement(airport[i]);
+            }
+            setModel(airportName);
+        }
+        @Override
+        public void valueChanged(ListSelectionEvent e) { // 대륙 리스트 클릭시 대륙 이미지 변화 및 나라 리스트 변화, 각 Panel들을 다시 불러오면 될듯한데 왜 안되징
+            if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
+                System.out.println("selected :" + this.getSelectedValue());
+                currentconName = this.getSelectedValue().toString();
+                System.out.println(currentconName);
+            }
         }
     }
 
