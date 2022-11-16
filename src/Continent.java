@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 public class Continent {
     private String name;//대륙 이름
-    private ArrayList<Country> myCountry;//이 대륙에 포함된 국가
+    public ArrayList<Country> myCountry;//이 대륙에 포함된 국가
     private int numCountry;//이 대륙에 포함된 국가의 수
     private int numAirport;// 이 대륙에 포함된 공항의 수
     public Continent(String n){
@@ -39,4 +39,6 @@ public class Continent {
         return -1;
     }
     public int getNumCountry(){ return this.numCountry; }
+
+    public int getNumAirport(){ return this.numAirport; }
 }

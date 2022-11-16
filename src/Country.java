@@ -4,7 +4,7 @@ public class Country {
     private String eng_name;//영문 국가명
     private String kor_name;//한글 국가명
     private Continent myContinent;//내가 소속된 지역
-    private ArrayList<Airport> myAirport;//나라에 포함된 국가
+    private ArrayList<Airport> myAirport;//나라에 포함된 공항
     private int numAirport;
     public Country(String en,String kn){
         this.eng_name = en;
