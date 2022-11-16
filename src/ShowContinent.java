@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.*;
 
@@ -38,7 +40,11 @@ public class ShowContinent extends JFrame {
                 btnContinent[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 btnContinent[i].setBackground(Color.red);
                 btnContinent[i].setText(btnName[i]);
+                btnContinent[i].addActionListener(e -> {
+                    GraphFrame gf = new GraphFrame();
+                });
                 bg.add(btnContinent[i]);
+
                 break;
             }
             btnContinent[i].setBorderPainted(false);
