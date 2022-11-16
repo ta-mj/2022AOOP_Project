@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 public class Continent {
     private String name;//대륙 이름
-    public ArrayList<Country> myCountry;//이 대륙에 포함된 국가
+    private ArrayList<Country> myCountry;//이 대륙에 포함된 국가
     private int numCountry;//이 대륙에 포함된 국가의 수
     private int numAirport;// 이 대륙에 포함된 공항의 수
     public Continent(String n){
@@ -32,7 +32,7 @@ public class Continent {
     }
     public int getCountryPosition(String s) {
         for(int i = 0 ; i < myCountry.size(); i++) {
-            if(this.myCountry.get(i).getEngName().equals(s) == true) {
+            if(this.myCountry.get(i).getKorName().equals(s) == true) {
                 return i;
             }
         }
@@ -40,5 +40,10 @@ public class Continent {
     }
     public int getNumCountry(){ return this.numCountry; }
 
-    public int getNumAirport(){ return this.numAirport; }
+    public Country getmyCountry(Country c) {
+        if(this.myCountry.contains(c)){
+            return c;
+        }
+        return null;
+    }
 }
