@@ -46,4 +46,8 @@ public class Continent {
         }
         return null;
     }
+
+    public Integer getNumAirport() {
+        return this.getNumAirport();
+    }
 }
