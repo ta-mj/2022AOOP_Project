@@ -3,8 +3,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import java.util.HashSet;
 public class MainFrame extends JFrame { //메인 프레임
     private static String currentconName;
     private static Continent currentCont;
+    private static Country currentCountry;
 
     //국제 / 국내 공항 radio 버튼 변수
     JRadioButton allRBtn = new JRadioButton("전체"); //JRadioButton 생성
@@ -72,6 +72,9 @@ public class MainFrame extends JFrame { //메인 프레임
             setVisible(false);
         });
         add(btnBack);
+
+        // 다 만들어지면 대륙 클릭시 초기 MainFrame에서 처음 대륙리스트 클릭되게 만듦
+        continentList.setSelectedValue(currentconName, true);
         setVisible(true);
     }
 
@@ -136,7 +139,7 @@ public class MainFrame extends JFrame { //메인 프레임
                         if (str.equals(hm.get(str).getName())) { //대륙 이름을 입력했냐?
                             System.out.println(str + " 대륙 이름임");
                             findKey = true;
-                            continentList.setSelectedValue(str,true);
+                            continentList.setSelectedValue(str, true);
                         }
                     } else { // 나라 이름이냐
                         for (String element : cons) { // 대륙을 돌면서 나라를 찾음
@@ -147,8 +150,8 @@ public class MainFrame extends JFrame { //메인 프레임
                                     System.out.println(str + " 나라 이름임");
                                     findKey = true;
                                     // 나라 선택된다는 가정
-                                    continentList.setSelectedValue(element,true);
-                                    countryList.setSelectedValue(str,true);
+                                    continentList.setSelectedValue(element, true);
+                                    countryList.setSelectedValue(str, true);
                                 } else {
                                     if (hm.get(element).getmyCountry(c) != null) {
                                         for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
@@ -157,9 +160,9 @@ public class MainFrame extends JFrame { //메인 프레임
                                                 System.out.println(str + " 공항 이름임");
                                                 findKey = true;
                                                 //공항 선택된다는 가정
-                                                continentList.setSelectedValue(element,true);
-                                                countryList.setSelectedValue(c.getKorName(),true);
-                                                airportList.setSelectedValue(str,true);
+                                                continentList.setSelectedValue(element, true);
+                                                countryList.setSelectedValue(c.getKorName(), true);
+                                                airportList.setSelectedValue(str, true);
                                             }
                                         }
                                     }
@@ -224,11 +227,12 @@ public class MainFrame extends JFrame { //메인 프레임
         public void valueChanged(ListSelectionEvent e) { // 대륙 리스트 클릭시 대륙 이미지 변화 및 나라 리스트 변화, 각 Panel들을 다시 불러오면 될듯한데 왜 안되징
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
                 //나라 및 공항 리스트 초기화
-                countryList.countryName.removeAllElements();
-                countryList.setModel(countryList.countryName);
-                airportList.airportName.removeAllElements();
-                airportList.setModel(airportList.airportName);
-
+                if (countryList != null) {
+                    countryList.countryName.removeAllElements();
+                    countryList.setModel(countryList.countryName);
+                    airportList.airportName.removeAllElements();
+                    airportList.setModel(airportList.airportName);
+                }
                 System.out.println("selected :" + this.getSelectedValue());
                 currentconName = this.getSelectedValue().toString();
                 System.out.println(currentconName);
@@ -287,9 +291,9 @@ public class MainFrame extends JFrame { //메인 프레임
         }
     }
 
-    class AirportList extends JList implements ListSelectionListener {
+    class AirportList extends JList {
         DefaultListModel<String> airportName;
-
+        private String clickAirportName;
         public AirportList() {
             super();
             airportName = new DefaultListModel<>();
@@ -299,16 +303,14 @@ public class MainFrame extends JFrame { //메인 프레임
             airportName.removeAllElements();
             ArrayList<String> airport = new ArrayList<>();
             for (int i = 0; i < c.getAllAirport().size(); i++) {
-                if(inter_all_dom_status == all){
+                if (inter_all_dom_status == all) {
                     airport.add(c.getOneAirport(i).getKorName());
-                }
-                else if(inter_all_dom_status == international){
-                    if(c.getOneAirport(i).isInternational()){
+                } else if (inter_all_dom_status == international) {
+                    if (c.getOneAirport(i).isInternational()) {
                         airport.add(c.getOneAirport(i).getKorName());
                     }
-                }
-                else if(inter_all_dom_status == domestic){
-                    if(!c.getOneAirport(i).isInternational()){
+                } else if (inter_all_dom_status == domestic) {
+                    if (!c.getOneAirport(i).isInternational()) {
                         airport.add(c.getOneAirport(i).getKorName());
                     }
                 }
@@ -320,15 +322,28 @@ public class MainFrame extends JFrame { //메인 프레임
                 airportName.addElement(airport_str[i]);
             }
             setModel(airportName);
+
+            MouseListener mouseListener = new MouseAdapter() {
+                public void mouseClicked(MouseEvent mouseEvent) {
+                    JList<String> theList = (JList) mouseEvent.getSource();
+                    if (mouseEvent.getClickCount() == 2) {
+                        int index = theList.locationToIndex(mouseEvent.getPoint());
+                        if (index >= 0) {
+                            clickAirportName = theList.getModel().getElementAt(index).toString();
+                            //airport 객체로 접근하는 해쉬맵이든 만들어야됨
+                            showAirportInfo();
+                        }
+                    }
+                }
+            };
+            addMouseListener(mouseListener);
         }
 
-        @Override
-        public void valueChanged(ListSelectionEvent e) { // 대륙 리스트 클릭시 대륙 이미지 변화 및 나라 리스트 변화, 각 Panel들을 다시 불러오면 될듯한데 왜 안되징
-            if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
-                System.out.println("selected :" + this.getSelectedValue());
-                currentconName = this.getSelectedValue().toString();
-                System.out.println(currentconName);
-            }
+        private void showAirportInfo(){ // 공항정보 출력 함수
+            String str = "현재 " + clickAirportName + " 정보\n"
+                    + "공항 지역 : " ;
+            JOptionPane.showMessageDialog(null, str, clickAirportName + " 정보", JOptionPane.PLAIN_MESSAGE);
+
         }
     }
 
@@ -351,27 +366,26 @@ public class MainFrame extends JFrame { //메인 프레임
 
         //그룹에 그룹화시킬 버튼들을 추가
     }
-    class RadioButtonListener implements ItemListener{
+
+    class RadioButtonListener implements ItemListener {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if(e.getStateChange()==ItemEvent.DESELECTED){
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
                 return;
             }
-            if(allRBtn.isSelected()){
+            if (allRBtn.isSelected()) {
                 inter_all_dom_status = all;
                 System.out.println(inter_all_dom_status);
                 airportList.airportName.removeAllElements();
-            }
-            else if(interRBtn.isSelected()){
+            } else if (interRBtn.isSelected()) {
                 inter_all_dom_status = international;
                 System.out.println(inter_all_dom_status);
-            }
-            else if(domRBtn.isSelected()){
+            } else if (domRBtn.isSelected()) {
                 inter_all_dom_status = domestic;
                 System.out.println(inter_all_dom_status);
             }
-            if(ProjectMain.getSelectedCountry() != null)
+            if (ProjectMain.getSelectedCountry() != null)
                 airportList.setAirportList(ProjectMain.getSelectedCountry());
         }
     }
