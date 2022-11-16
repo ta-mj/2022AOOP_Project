@@ -48,6 +48,6 @@ public class Continent {
     }
 
     public Integer getNumAirport() {
-        return this.getNumAirport();
+        return this.numAirport;
     }
 }

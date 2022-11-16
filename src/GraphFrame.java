@@ -3,8 +3,8 @@ import java.awt.*;
 
 public class GraphFrame extends JFrame {
     String title = "각 대륙별 공항 개수";
-    Continent[] continents = new Continent[8];
-    Integer[] numOfAirport = new Integer[8];
+    Continent[] continents = new Continent[7];
+    Integer[] numOfAirport = new Integer[7];
     int barStartX = 150; //첫번째 버튼이 시작하는 X좌표
     int barStartY = 800; //버튼이 그려지는 Y좌표
     int barWidth = 50;  //막대 너비
@@ -14,15 +14,15 @@ public class GraphFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE); //끄기버튼 활성화
         setSize(d.width, d.height); //화면 크기에 맞게 생성
 
-        for(int i = 0; i<8; i++){ //대륙별 공항 개수 정보 가져와서 저장
+        for(int i = 0; i<7; i++){ //대륙별 공항 개수 정보 가져와서 저장
             continents[i] = ProjectMain.allContinent.get(MainFrame.cons[i]);
             numOfAirport[i] = continents[i].getNumAirport();
             //System.out.println(((Continent) ProjectMain.allContinent.get(ConList.cons[i])).myCountry.get(0).getEngName());
         }
         GraphPanel myGraphPanel = new GraphPanel(this);
-        RoundedButton[] conBtn = new RoundedButton[8];
+        RoundedButton[] conBtn = new RoundedButton[7];
         Font btnFont = new Font("맑은 고딕", Font.BOLD, 20 );
-        for(int i = 0; i<8; i++){ //버튼 생성 및 Panel에 추가
+        for(int i = 0; i<7; i++){ //버튼 생성 및 Panel에 추가
             conBtn[i] = new RoundedButton(MainFrame.cons[i]);
             conBtn[i].setLocation(barStartX+distance*i, barStartY+50);
             conBtn[i].setSize(100,50);
@@ -38,6 +38,19 @@ public class GraphFrame extends JFrame {
             });
             myGraphPanel.add(conBtn[i]);
         }
+        RoundedButton btnBack = new RoundedButton();
+        btnBack.setText("뒤로가기");
+        Font backBtnFont = new Font("맑은 고딕", Font.BOLD, 30);
+        btnBack.setFont(backBtnFont);
+        btnBack.setForeground(Color.white);
+        btnBack.setBackground(Color.DARK_GRAY);
+        btnBack.setLocation(30, 10);
+        btnBack.setSize(150, 40);
+        btnBack.addActionListener(e -> {
+            new ShowContinent();
+            setVisible(false);
+        });
+        myGraphPanel.add(btnBack);
         myGraphPanel.setLayout(null);
         myGraphPanel.setBackground(Color.white);
         setContentPane(myGraphPanel);
@@ -52,7 +65,7 @@ class GraphPanel extends JPanel{
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        for(int i = 0; i<8; i++){
+        for(int i = 0; i<7; i++){
             Font titleFont = new Font("맑은 고딕", Font.BOLD, 50 );
             g.setFont(titleFont);
             g.drawString(gf.title, 600, 110);
