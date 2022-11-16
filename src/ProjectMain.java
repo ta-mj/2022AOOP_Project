@@ -30,7 +30,7 @@ public class ProjectMain extends JFrame {
         ResultSet rs = pstmt.executeQuery();
         while (rs.next()) {
             if (allContinent.containsKey(rs.getString(5))) {
-                int position = allContinent.get(rs.getString(5)).getCountryPosition(rs.getString(6));
+                int position = allContinent.get(rs.getString(5)).getCountryPosition(rs.getString(7));
                 Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(8));
                 if (position != -1) {
                     allContinent.get(rs.getString(5)).getOneCountry(position).setMyAirport(a);
@@ -40,13 +40,21 @@ public class ProjectMain extends JFrame {
                     ct.setMyAirport(a);
                 }
             } else {
-                Continent cn = new Continent(rs.getString(5));
-                Country ct = new Country(rs.getString(6), rs.getString(7));
-                Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(8));
-                cn.setMyCountry(ct);
-                ct.setMyAirport(a);
-                allContinent.put(rs.getString(5), cn);
+                if(rs.getString(5).equals("남미")){
+                    Country ct = new Country(rs.getString(6), rs.getString(7));
+                    Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(8));
+                    allContinent.get("중남미").setMyCountry(ct);
+                    ct.setMyAirport(a);
+                }
+                else{
+                    Continent cn = new Continent(rs.getString(5));
+                    Country ct = new Country(rs.getString(6), rs.getString(7));
+                    Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(8));
+                    cn.setMyCountry(ct);
+                    ct.setMyAirport(a);
+                    allContinent.put(rs.getString(5), cn);
 
+                }
             }
         }
     }
