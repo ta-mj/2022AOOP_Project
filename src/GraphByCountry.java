@@ -15,7 +15,7 @@ public class GraphByCountry extends JDialog {
     String[] topCountry = new String[7]; //top7 국가 한국 이름
     Integer topNumAp;
     int barStartX = 150; //첫번째 버튼이 시작하는 X좌표
-    int barStartY = 800; //버튼이 그려지는 Y좌표
+    int barStartY; //버튼이 그려지는 Y좌표
     int barWidth = 70;  //막대 너비
     int distance = 200; //막대 간격
     RoundedButton exitBtn;
@@ -25,8 +25,9 @@ public class GraphByCountry extends JDialog {
         this.barColor = barColor;
 
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //화면 크기 저장
-        setSize(d.width*4/5, d.height);
+        setSize(d.width*9/10, d.height*9/10);
         this.setLocation((d.width/2)-this.getWidth()/2, (d.height/2)-this.getHeight()/2);
+        this.barStartY = d.height*7/10;
         exitBtn = new RoundedButton("X");
         exitBtn.setSize(50,50);
         System.out.println(this.getX() +this.getWidth()-100);

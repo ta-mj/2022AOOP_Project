@@ -43,9 +43,9 @@ public class ShowContinent extends JFrame {
                 btnContinent[i].setText(btnName[i]);
                 btnContinent[i].addActionListener(e -> {
                     GraphFrame gf = new GraphFrame();
+                    setVisible(false);
                 });
                 bg.add(btnContinent[i]);
-                setVisible(false);
                 break;
             }
             btnContinent[i].setBorderPainted(false);
