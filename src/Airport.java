@@ -5,7 +5,7 @@ public class Airport {
     private String air_code1;//공항 코드1
     private String air_code2;//공항 코드2
     private Country myCountry;//공항이 소속된 나라
-    public Airport(String en, String kn, String cn, String ac1, String ac2){
+    public Airport(String en, String kn, String ac1, String ac2 , String cn){
         this.eng_name = en;
         this.kor_name = kn;
         this.city_name = cn;

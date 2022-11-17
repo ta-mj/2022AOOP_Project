@@ -14,7 +14,7 @@ public class MainFrame extends JFrame { //메인 프레임
     private static String currentconName;
     private static Continent currentCont;
     private static Country currentCountry;
-
+    private static Airport currentAirport;
     //국제 / 국내 공항 radio 버튼 변수
     JRadioButton allRBtn = new JRadioButton("전체"); //JRadioButton 생성
     JRadioButton interRBtn = new JRadioButton("국제");
@@ -37,7 +37,6 @@ public class MainFrame extends JFrame { //메인 프레임
 
     private static Image img;
     private static JLabel lb;
-    private static DefaultListModel<String> model = new DefaultListModel<>();
 
     public MainFrame(String title) throws IOException {
         super("공항 통합 검색");//타이틀
@@ -81,7 +80,6 @@ public class MainFrame extends JFrame { //메인 프레임
     public void setImage() {
         conImage = new HashMap<>();
         for (int i = 0; i < cons.length; i++) {
-            System.out.println(cons[i]);
             conImage.put(cons[i], new ImageIcon(MainFrame.class.getResource("./image/" + cons[i] + ".png")).getImage());
         }
     }
@@ -112,7 +110,6 @@ public class MainFrame extends JFrame { //메인 프레임
 
     class LookUpPanel extends JPanel { //검색, 정렬, 조회 통합 판넬
         public LookUpPanel(Continent c) {
-//            setLayout(null); //세로 박스정렬
             SearchPanel searchPanel = new SearchPanel();
 
             add(searchPanel);
@@ -125,62 +122,62 @@ public class MainFrame extends JFrame { //메인 프레임
     }
 
     class SearchPanel extends JPanel { //검색 판넬
+        private HashMap<String, Continent> hm = ProjectMain.allContinent;
+        private JTextField textField = new JTextField(20);
+        private JButton btnSearch = new JButton("search");
+
         public SearchPanel() {
-            HashMap<String, Continent> hm = ProjectMain.allContinent;
-            JTextField textField = new JTextField(20);
-            JButton btnSearch = new JButton("search");
-            textField.addActionListener(e -> {
-                boolean findKey = false;
-                String str = textField.getText();
-                textField.setText("");
-                //System.out.println(hm.get(str).getName());
-                if (str != null) {
-                    if (Arrays.asList(cons).contains(str)) {
-                        if (str.equals(hm.get(str).getName())) { //대륙 이름을 입력했냐?
-                            System.out.println(str + " 대륙 이름임");
-                            findKey = true;
-                            continentList.setSelectedValue(str, true);
-                        }
-                    } else { // 나라 이름이냐
-                        for (String element : cons) { // 대륙을 돌면서 나라를 찾음
+            textField.addActionListener(e -> { //텍스트 필드 엔터쳤을때 액션함수
+                searchInfo();
+            });
+            btnSearch.addActionListener(e -> { //버튼 클릭 액션함수
+                searchInfo();
+            });
+            add(textField);
+            add(btnSearch);
+        }
+
+        private void searchInfo() {
+            boolean findKey = false;
+            String str = textField.getText();
+            textField.setText("");
+            if (str != null) {
+                if (Arrays.asList(cons).contains(str)) {
+                    if (str.equals(hm.get(str).getName())) { //대륙 이름을 입력했냐?
+                        findKey = true;
+                        continentList.setSelectedValue(str, true);
+                    }
+                } else { // 나라 이름이냐
+                    for (String element : cons) { // 대륙을 돌면서 나라를 찾음
+                        if (findKey) break;
+                        for (Country c : hm.get(element).getAllCountries()) {
                             if (findKey) break;
-                            for (Country c : hm.get(element).getAllCountries()) {
-                                if (findKey) break;
-                                if (str.equals(c.getKorName())) {
-                                    System.out.println(str + " 나라 이름임");
-                                    findKey = true;
-                                    // 나라 선택된다는 가정
-                                    continentList.setSelectedValue(element, true);
-                                    countryList.setSelectedValue(str, true);
-                                } else {
-                                    if (hm.get(element).getmyCountry(c) != null) {
-                                        for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
-                                            if (findKey) break;
-                                            if (str.equals(a.getKorName())) {
-                                                System.out.println(str + " 공항 이름임");
-                                                findKey = true;
-                                                //공항 선택된다는 가정
-                                                continentList.setSelectedValue(element, true);
-                                                countryList.setSelectedValue(c.getKorName(), true);
-                                                airportList.setSelectedValue(str, true);
-                                            }
+                            if (str.equals(c.getKorName())) {
+                                findKey = true;
+                                // 나라 선택된다는 가정
+                                continentList.setSelectedValue(element, true);
+                                countryList.setSelectedValue(str, true);
+                            } else {
+                                if (hm.get(element).getmyCountry(c) != null) {
+                                    for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
+                                        if (findKey) break;
+                                        if (str.equals(a.getKorName())) {
+                                            findKey = true;
+                                            //공항 선택된다는 가정
+                                            continentList.setSelectedValue(element, true);
+                                            countryList.setSelectedValue(c.getKorName(), true);
+                                            airportList.setSelectedValue(str, true);
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    if (!findKey) {
-                        System.out.println("정보를 찾지 못했습니다");
-                    }
                 }
-            });
-            btnSearch.addActionListener(e -> {
-                String str = textField.getText();
-                System.out.println(str);
-            });
-            add(textField);
-            add(btnSearch);
+                if (!findKey) {
+                    JOptionPane.showMessageDialog(null, str + "의 정보를 찾지 못했습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+                }
+            }
         }
     }
 
@@ -233,9 +230,7 @@ public class MainFrame extends JFrame { //메인 프레임
                     airportList.airportName.removeAllElements();
                     airportList.setModel(airportList.airportName);
                 }
-                System.out.println("selected :" + this.getSelectedValue());
                 currentconName = this.getSelectedValue().toString();
-                System.out.println(currentconName);
                 ProjectMain.setSelectedContinent(ProjectMain.getContinent(currentconName));
                 currentCont = ProjectMain.getSelectedContinent();
                 continentImagePanel.repaint();
@@ -258,14 +253,11 @@ public class MainFrame extends JFrame { //메인 프레임
         @Override
         public void valueChanged(ListSelectionEvent e) { // 나라 리스트 선택 시 공항 리스트 불러오기
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
-                System.out.println("selected :" + this.getSelectedValue());
                 if (this.getSelectedValue() != null) {
                     String countryStr = this.getSelectedValue().toString();
-                    System.out.println(countryStr);
                     for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
                         if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
                             ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
-                            System.out.println(ProjectMain.getSelectedCountry().getKorName());
                             break;
                         } else {
 
@@ -294,6 +286,7 @@ public class MainFrame extends JFrame { //메인 프레임
     class AirportList extends JList {
         DefaultListModel<String> airportName;
         private String clickAirportName;
+
         public AirportList() {
             super();
             airportName = new DefaultListModel<>();
@@ -329,8 +322,9 @@ public class MainFrame extends JFrame { //메인 프레임
                     if (mouseEvent.getClickCount() == 2) {
                         int index = theList.locationToIndex(mouseEvent.getPoint());
                         if (index >= 0) {
-                            clickAirportName = theList.getModel().getElementAt(index).toString();
-                            //airport 객체로 접근하는 해쉬맵이든 만들어야됨
+                            clickAirportName = theList.getModel().getElementAt(index);
+                            ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
+                            currentAirport = ProjectMain.getSelectedAirport();
                             showAirportInfo();
                         }
                     }
@@ -339,9 +333,11 @@ public class MainFrame extends JFrame { //메인 프레임
             addMouseListener(mouseListener);
         }
 
-        private void showAirportInfo(){ // 공항정보 출력 함수
-            String str = "현재 " + clickAirportName + " 정보\n"
-                    + "공항 지역 : " ;
+        private void showAirportInfo() { // 공항정보 출력 함수
+            String str = "현재 공항 정보\n\n"
+                    + "공항 지역 : " + currentAirport.getCityName() + "\n영문 공항명 : " + currentAirport.getEngName() + "\n한글 공항명 : " + currentAirport.getKorName()
+                    + "\n공항 코드1(IATA) : " + currentAirport.getAirCode1()
+                    + "\n공항 코드2(ICAO) : " + currentAirport.getAirCode2();
             JOptionPane.showMessageDialog(null, str, clickAirportName + " 정보", JOptionPane.PLAIN_MESSAGE);
 
         }
@@ -376,14 +372,11 @@ public class MainFrame extends JFrame { //메인 프레임
             }
             if (allRBtn.isSelected()) {
                 inter_all_dom_status = all;
-                System.out.println(inter_all_dom_status);
                 airportList.airportName.removeAllElements();
             } else if (interRBtn.isSelected()) {
                 inter_all_dom_status = international;
-                System.out.println(inter_all_dom_status);
             } else if (domRBtn.isSelected()) {
                 inter_all_dom_status = domestic;
-                System.out.println(inter_all_dom_status);
             }
             if (ProjectMain.getSelectedCountry() != null)
                 airportList.setAirportList(ProjectMain.getSelectedCountry());
