@@ -12,7 +12,8 @@ public class GraphFrame extends JFrame {
     public GraphFrame(){
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //화면 크기 저장
         setDefaultCloseOperation(EXIT_ON_CLOSE); //끄기버튼 활성화
-        setSize(d.width, d.height); //화면 크기에 맞게 생성
+        setSize(d.width*4/5, d.height);
+        this.setLocation((d.width/2)-this.getWidth()/2, (d.height/2)-this.getHeight()/2);
 
         for(int i = 0; i<7; i++){ //대륙별 공항 개수 정보 가져와서 저장
             continents[i] = ProjectMain.allContinent.get(MainFrame.cons[i]);

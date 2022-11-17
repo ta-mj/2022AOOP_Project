@@ -23,10 +23,13 @@ public class GraphByCountry extends JDialog {
         super(frame, title);
         this.setLayout(null);
         this.barColor = barColor;
+
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //화면 크기 저장
-        this.setLocation((d.width/2)-750, (d.height/2)-450);
+        setSize(d.width*4/5, d.height);
+        this.setLocation((d.width/2)-this.getWidth()/2, (d.height/2)-this.getHeight()/2);
         exitBtn = new RoundedButton("X");
         exitBtn.setSize(50,50);
+        System.out.println(this.getX() +this.getWidth()-100);
         exitBtn.setLocation(1450, 0);
         exitBtn.setBackground(Color.RED);
         exitBtn.addMouseListener(new MouseAdapter() {
@@ -105,8 +108,6 @@ public class GraphByCountry extends JDialog {
             }
         });
         add(saveBtn);
-
-        setSize(1500, 900);
         setVisible(true);
     }
     public void getTopAirport(){
