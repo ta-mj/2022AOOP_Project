@@ -33,7 +33,6 @@ public class GraphFrame extends JFrame {
             int finalI = i;
             conBtn[i].addActionListener(e -> {
                 GraphByCountry gc = new GraphByCountry(this, e.getActionCommand(),continents[finalI], GraphByCountry.colorList[finalI] );
-                gc.setLocation(300,50);
                 gc.setVisible(true);
             });
             myGraphPanel.add(conBtn[i]);

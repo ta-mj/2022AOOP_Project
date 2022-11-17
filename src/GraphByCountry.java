@@ -1,6 +1,8 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
 
 public class GraphByCountry extends JDialog {
@@ -21,6 +23,8 @@ public class GraphByCountry extends JDialog {
         super(frame, title);
         this.setLayout(null);
         this.barColor = barColor;
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //화면 크기 저장
+        this.setLocation((d.width/2)-750, (d.height/2)-450);
         exitBtn = new RoundedButton("X");
         exitBtn.setSize(50,50);
         exitBtn.setLocation(1450, 0);
@@ -56,6 +60,51 @@ public class GraphByCountry extends JDialog {
             conBtn[i].setFont(btnFont);
             add(conBtn[i]);
         }
+
+        RoundedButton saveBtn = new RoundedButton("저장");
+        saveBtn.setSize(100,50);
+        saveBtn.setLocation(1340, 0);
+        saveBtn.setBackground(Color.PINK);
+        saveBtn.addActionListener(e -> {
+            JFileChooser c = new JFileChooser();
+            File nf;
+            String dir;
+            //필터링될 확장자
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("csv 파일", "csv");
+
+            //필터링될 확장자 추가
+            c.addChoosableFileFilter(filter);
+            int rVal = c.showSaveDialog(this);
+            if (rVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    dir = c.getSelectedFile() + "";
+                    nf = new File(dir);
+
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(nf));
+                    bw.write("대륙,나라,공항 개수");
+                    for(Country mc: this.myCountrys){
+                        bw.write("\n");
+                        bw.write(this.myContinent.getName()+"," + mc.getKorName()+"," +mc.getNumAirport());
+                    }
+
+
+                    bw.close();
+                    File selectedFile = c.getSelectedFile();
+                    System.out.println(selectedFile.getPath().toString());
+                    File moveTo = new File(selectedFile.getPath().toString()+".csv");
+                    selectedFile.renameTo(moveTo);
+
+                } catch (FileNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        add(saveBtn);
 
         setSize(1500, 900);
         setVisible(true);
