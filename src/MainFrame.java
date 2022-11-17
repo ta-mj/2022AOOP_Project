@@ -69,6 +69,7 @@ public class MainFrame extends JFrame { //메인 프레임
         btnBack.addActionListener(e -> {
             new ShowContinent();
             setVisible(false);
+            airportList.airportName.removeAllElements();
         });
         add(btnBack);
 
@@ -290,6 +291,7 @@ public class MainFrame extends JFrame { //메인 프레임
         public AirportList() {
             super();
             airportName = new DefaultListModel<>();
+            addMouseListener(mouseListener);
         }
 
         public void setAirportList(Country c) {
@@ -315,23 +317,23 @@ public class MainFrame extends JFrame { //메인 프레임
                 airportName.addElement(airport_str[i]);
             }
             setModel(airportName);
+//            final Boolean[] isClicked = {true};
 
-            MouseListener mouseListener = new MouseAdapter() {
-                public void mouseClicked(MouseEvent mouseEvent) {
-                    JList<String> theList = (JList) mouseEvent.getSource();
-                    if (mouseEvent.getClickCount() == 2) {
-                        int index = theList.locationToIndex(mouseEvent.getPoint());
-                        if (index >= 0) {
-                            clickAirportName = theList.getModel().getElementAt(index);
-                            ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
-                            currentAirport = ProjectMain.getSelectedAirport();
-                            showAirportInfo();
-                        }
+        }
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+                JList<String> theList = (JList) mouseEvent.getSource();
+                if (mouseEvent.getClickCount() == 2) {
+                    int index = theList.locationToIndex(mouseEvent.getPoint());
+                    if (index >= 0) {
+                        clickAirportName = theList.getModel().getElementAt(index);
+                        ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
+                        currentAirport = ProjectMain.getSelectedAirport();
+                        showAirportInfo();
                     }
                 }
-            };
-            addMouseListener(mouseListener);
-        }
+            }
+        };
 
         private void showAirportInfo() { // 공항정보 출력 함수
             String str = "현재 공항 정보\n\n"
@@ -351,6 +353,7 @@ public class MainFrame extends JFrame { //메인 프레임
             allRBtn.addItemListener(new RadioButtonListener());
             interRBtn.addItemListener(new RadioButtonListener());
             domRBtn.addItemListener(new RadioButtonListener());
+            allRBtn.setSelected(true); //전체 버튼 default check
             rGroup.add(allRBtn);
             rGroup.add(interRBtn);
             rGroup.add(domRBtn);
@@ -359,28 +362,28 @@ public class MainFrame extends JFrame { //메인 프레임
             add(domRBtn);
 
         }
+        class RadioButtonListener implements ItemListener {
 
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    return;
+                }
+                if (allRBtn.isSelected()) {
+                    inter_all_dom_status = all;
+                    airportList.airportName.removeAllElements();
+                } else if (interRBtn.isSelected()) {
+                    inter_all_dom_status = international;
+                } else if (domRBtn.isSelected()) {
+                    inter_all_dom_status = domestic;
+                }
+                if (ProjectMain.getSelectedCountry() != null)
+                    airportList.setAirportList(ProjectMain.getSelectedCountry());
+            }
+        }
         //그룹에 그룹화시킬 버튼들을 추가
     }
 
-    class RadioButtonListener implements ItemListener {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.DESELECTED) {
-                return;
-            }
-            if (allRBtn.isSelected()) {
-                inter_all_dom_status = all;
-                airportList.airportName.removeAllElements();
-            } else if (interRBtn.isSelected()) {
-                inter_all_dom_status = international;
-            } else if (domRBtn.isSelected()) {
-                inter_all_dom_status = domestic;
-            }
-            if (ProjectMain.getSelectedCountry() != null)
-                airportList.setAirportList(ProjectMain.getSelectedCountry());
-        }
-    }
 
 }

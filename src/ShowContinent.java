@@ -41,7 +41,8 @@ public class ShowContinent extends JFrame {
                 btnContinent[i].setBackground(Color.red);
                 btnContinent[i].setText(btnName[i]);
                 btnContinent[i].addActionListener(e -> {
-                    GraphFrame gf = new GraphFrame();
+                    new GraphFrame();
+                    setVisible(false);
                 });
                 bg.add(btnContinent[i]);
 

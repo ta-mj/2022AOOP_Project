@@ -20,6 +20,7 @@ public class GraphByCountry extends JDialog {
     public GraphByCountry (JFrame frame,String title, Continent myContinent, Color barColor){
         super(frame, title);
         this.setLayout(null);
+        setLocationRelativeTo(null);
         this.barColor = barColor;
         exitBtn = new RoundedButton("X");
         exitBtn.setSize(50,50);
