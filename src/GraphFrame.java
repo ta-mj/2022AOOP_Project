@@ -14,7 +14,7 @@ public class GraphFrame extends JFrame {
     public GraphFrame(){
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //화면 크기 저장
         setDefaultCloseOperation(EXIT_ON_CLOSE); //끄기버튼 활성화
-        setSize(1300, d.height);
+        setSize(1300, d.height*8/10);
         this.barStartY = d.height*7/10;
         this.setLocation((d.width/2)-this.getWidth()/2, (d.height/2)-this.getHeight()/2);
 
