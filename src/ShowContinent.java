@@ -45,7 +45,7 @@ public class ShowContinent extends JFrame {
                     GraphFrame gf = new GraphFrame();
                 });
                 bg.add(btnContinent[i]);
-
+                setVisible(false);
                 break;
             }
             btnContinent[i].setBorderPainted(false);
