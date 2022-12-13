@@ -27,6 +27,9 @@ public class Country {
     public void setMyContinent(Continent cn){
         this.myContinent = cn;
     }
+    public Continent getMyContinent(){
+        return this.myContinent;
+    }
     public String getEngName(){ return this.eng_name; }
     public String getKorName(){ return this.kor_name; }
     public ArrayList<Airport> getAllAirport(){ return this.myAirport; }

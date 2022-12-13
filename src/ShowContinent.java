@@ -11,6 +11,7 @@ public class ShowContinent extends JFrame {
     static int[][] location = new int[][]{{174, 222}, {239, 345}, {100, 421}, {400, 120}, {507, 586}, {850, 200}, {1100, 500}, {0, 0}};
     static int[][] btnSize = new int[][]{{200, 120}, {160, 100}, {180, 200}, {250, 450}, {200, 120}, {350, 300}, {180, 250}, {100, 60}};
     static String[] btnName = new String[]{"유럽", "중동", "아프리카", "아시아", "대양주", "북미", "중남미", "그래프"};
+
     private Image background = new ImageIcon(ProjectMain.class.getResource("./image/background.jpg")).getImage();//배경이미지
 
     /*생성자*/

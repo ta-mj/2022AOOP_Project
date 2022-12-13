@@ -8,6 +8,7 @@ import javax.swing.*;
 
 public class ProjectMain extends JFrame {
     public static HashMap<String, Continent> allContinent = new HashMap<>();
+    public static HashMap<String, Country> allCountry = new HashMap<>();
     public static HashMap<String, Airport> allAirport = new HashMap<>();
     private static Continent selectedContinent;
     private static Country selectedCountry;
@@ -59,17 +60,20 @@ public class ProjectMain extends JFrame {
                     allContinent.get(rs.getString(5)).getOneCountry(position).setMyAirport(a);
                 } else {
                     Country ct = new Country(rs.getString(6), rs.getString(7));
+                    allCountry.put(ct.getKorName(),ct);
                     allContinent.get(rs.getString(5)).setMyCountry(ct);
                     ct.setMyAirport(a);
                 }
             } else {
                 if (rs.getString(5).equals("남미")) {
                     Country ct = new Country(rs.getString(6), rs.getString(7));
+                    allCountry.put(ct.getKorName(),ct);
                     allContinent.get("중남미").setMyCountry(ct);
                     ct.setMyAirport(a);
                 } else {
                     Continent cn = new Continent(rs.getString(5));
                     Country ct = new Country(rs.getString(6), rs.getString(7));
+                    allCountry.put(ct.getKorName(),ct);
                     cn.setMyCountry(ct);
                     ct.setMyAirport(a);
                     allContinent.put(rs.getString(5), cn);

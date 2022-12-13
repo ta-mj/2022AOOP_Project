@@ -115,10 +115,9 @@ public class MainFrame extends JFrame { //메인 프레임
 
     class LookUpPanel extends JPanel { //검색, 정렬, 조회 통합 판넬
         public LookUpPanel(Continent c) {
-            setLayout(null);
             SearchPanel searchPanel = new SearchPanel();
-            searchPanel.setLocation(510,5);
-            searchPanel.setSize(50,50);
+            searchPanel.setLocation(510, 5);
+            searchPanel.setSize(50, 50);
             add(searchPanel);
             InfoPanel infoPanel = new InfoPanel();
             add(infoPanel);
@@ -133,20 +132,64 @@ public class MainFrame extends JFrame { //메인 프레임
         private JTextField textField = new JTextField(20);
 
         private DefaultListModel<String> model = new DefaultListModel<>();
-        private JList<String> searchList = new JList<>(model);
         private JButton btnSearch = new JButton("search");
 
         public SearchPanel() {
             textField.addActionListener(e -> { //텍스트 필드 엔터쳤을때 액션함수
+                totalSearch(textField.getText());
                 searchInfo();
             });
             btnSearch.addActionListener(e -> { //버튼 클릭 액션함수
-                searchInfo();
+                totalSearch(textField.getText());
+                //searchInfo();
             });
-            searchList.setLocation(530,15);
-            add(searchList);
             add(textField);
             add(btnSearch);
+        }
+
+        public void totalSearch(String s) {
+            DefaultListModel<String> continentResult = new DefaultListModel<>();
+            DefaultListModel<String> countryResult = new DefaultListModel<>();
+            DefaultListModel<String> airportResult = new DefaultListModel<>();
+            ProjectMain.allContinent.forEach((key, value) -> {
+                Continent c = value;
+                if (c.getName().contains(s)) {
+                    System.out.println(c.getName());
+                    if (c.getName().equals(s)) {
+                        continentList.setSelectedValue(c.getName(), true);
+                        continentResult.addElement(c.getName());
+                        return;
+                    }
+                    continentResult.addElement(c.getName());
+                }
+                for (int i = 0; i < c.getNumCountry(); i++) {
+                    Country country = c.getOneCountry(i);
+                    if (country.getKorName().contains(s) || country.getEngName().contains(s)) {
+                        System.out.println(country.getKorName());
+                        if (country.getKorName().equals(s) || country.getEngName().equals(s)) {
+                            continentList.setSelectedValue(country.getMyContinent().getName(), true);
+                            countryList.setSelectedValue(country.getKorName(), true);
+//                            return;
+                        }
+
+                        countryResult.addElement(country.getKorName());
+                    }
+                    for (int j = 0; j < country.getNumAirport(); j++) {
+                        Airport airport = country.getOneAirport(j);
+                        if (airport.getKorName().contains(s) || airport.getEngName().contains(s) ||
+                                airport.getCityName().equals(s) || airport.getAirCode1().equals(s) ||
+                                airport.getAirCode2().equals(s)) {
+                            System.out.println(airport.getKorName());
+                            airportResult.addElement(airport.getKorName());
+                        }
+                    }
+                }
+            });
+            countryList.countryName.removeAllElements();
+            countryList.setModel(countryResult);
+            airportList.airportName.removeAllElements();
+            airportList.setModel(airportResult);
+
         }
 
         private void searchInfo() {
@@ -273,6 +316,9 @@ public class MainFrame extends JFrame { //메인 프레임
                 currentCont = ProjectMain.getSelectedContinent();
                 continentImagePanel.repaint();
                 countryList.setCountryList(currentCont);
+                airportList.airportName.removeAllElements();
+                ProjectMain.setSelectedCountry(null);
+                ProjectMain.setSelectedAirport(null);
             }
         }
     }
@@ -293,6 +339,12 @@ public class MainFrame extends JFrame { //메인 프레임
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
                 if (this.getSelectedValue() != null) {
                     String countryStr = this.getSelectedValue().toString();
+                    if (!ProjectMain.allCountry.get(countryStr).getMyContinent().equals(ProjectMain.getSelectedContinent())) {
+                        ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
+                        currentCont = ProjectMain.getSelectedContinent();
+                        continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(), true);
+                        countryList.setSelectedValue(countryStr, true);
+                    }
                     for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
                         if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
                             ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
