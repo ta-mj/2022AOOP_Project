@@ -137,7 +137,7 @@ public class MainFrame extends JFrame { //메인 프레임
         public SearchPanel() {
             textField.addActionListener(e -> { //텍스트 필드 엔터쳤을때 액션함수
                 totalSearch(textField.getText());
-                searchInfo();
+//                searchInfo();
             });
             btnSearch.addActionListener(e -> { //버튼 클릭 액션함수
                 totalSearch(textField.getText());
@@ -148,28 +148,38 @@ public class MainFrame extends JFrame { //메인 프레임
         }
 
         public void totalSearch(String s) {
+            final boolean[] findKey = {false};
             DefaultListModel<String> continentResult = new DefaultListModel<>();
             DefaultListModel<String> countryResult = new DefaultListModel<>();
             DefaultListModel<String> airportResult = new DefaultListModel<>();
+
+
             ProjectMain.allContinent.forEach((key, value) -> {
+                if(s.equals("")) return;
                 Continent c = value;
-                if (c.getName().contains(s)) {
-                    System.out.println(c.getName());
-                    if (c.getName().equals(s)) {
-                        continentList.setSelectedValue(c.getName(), true);
-                        continentResult.addElement(c.getName());
-                        return;
+                String[] countryArr;
+                if (c.getName().equals(s)) {
+                    findKey[0] = true;
+                    countryArr = new String[c.getAllCountries().size()];
+                    continentList.setSelectedValue(c.getName(), true);
+
+                    for (int i = 0; i < c.getAllCountries().size(); i++) {
+                        countryArr[i] = c.getOneCountry(i).getKorName();
+                    }
+                    Arrays.sort(countryArr);
+                    for (String str : countryArr) {
+                        countryResult.addElement(str);
                     }
                     continentResult.addElement(c.getName());
                 }
                 for (int i = 0; i < c.getNumCountry(); i++) {
                     Country country = c.getOneCountry(i);
                     if (country.getKorName().contains(s) || country.getEngName().contains(s)) {
+                        findKey[0] = true;
                         System.out.println(country.getKorName());
                         if (country.getKorName().equals(s) || country.getEngName().equals(s)) {
                             continentList.setSelectedValue(country.getMyContinent().getName(), true);
                             countryList.setSelectedValue(country.getKorName(), true);
-//                            return;
                         }
 
                         countryResult.addElement(country.getKorName());
@@ -179,87 +189,41 @@ public class MainFrame extends JFrame { //메인 프레임
                         if (airport.getKorName().contains(s) || airport.getEngName().contains(s) ||
                                 airport.getCityName().equals(s) || airport.getAirCode1().equals(s) ||
                                 airport.getAirCode2().equals(s)) {
+                            findKey[0] = true;
+                            if (airport.getKorName().equals(s)) {
+                                countryArr = new String[airport.getMyCountry().getMyContinent().getNumCountry()];
+                                continentList.setSelectedValue(airport.getMyCountry().getMyContinent().getName(), true);
+                                countryList.setSelectedValue(airport.getMyCountry().getKorName(), true);
+                                airportList.setSelectedValue(airport.getKorName(), true);
+                                for (int k = 0; k < countryArr.length; k++) {
+                                    countryArr[k] = c.getOneCountry(k).getKorName();
+                                }
+                                Arrays.sort(countryArr);
+                                for (int k = 0; k < countryArr.length; k++) {
+                                    countryResult.addElement(countryArr[k]);
+                                }
+                            }
                             System.out.println(airport.getKorName());
                             airportResult.addElement(airport.getKorName());
+//                            countryResult.addElement(airport.getMyCountry().getKorName());
+                            continentList.setSelectedValue(airport.getMyCountry().getMyContinent().getName(), true);
                         }
                     }
                 }
             });
-            countryList.countryName.removeAllElements();
-            countryList.setModel(countryResult);
-            airportList.airportName.removeAllElements();
-            airportList.setModel(airportResult);
-
-        }
-
-        private void searchInfo() {
-            boolean findKey = false;
-            String str = textField.getText();
-            textField.setText("");
-            if (str != null) {
-                if (Arrays.asList(cons).contains(str)) {
-                    if (str.equals(hm.get(str).getName())) { //대륙 이름을 입력했냐?
-                        findKey = true;
-                        continentList.setSelectedValue(str, true);
-                    }
-                } else { // 나라 이름이냐
-                    for (String element : cons) { // 대륙을 돌면서 나라를 찾음
-                        if (findKey) break;
-                        for (Country c : hm.get(element).getAllCountries()) {
-                            if (findKey) break;
-                            if (str.equals(c.getKorName())) {
-                                findKey = true;
-                                // 나라 선택된다는 가정
-                                continentList.setSelectedValue(element, true);
-                                countryList.setSelectedValue(str, true);
-                            } else {
-                                if (hm.get(element).getmyCountry(c) != null) {
-                                    for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
-                                        if (findKey) break;
-                                        if (str.contains(a.getKorName())) {
-                                            if (str.equals(a.getKorName())) {
-                                                findKey = true;
-                                                continentList.setSelectedValue(element, true);
-                                                countryList.setSelectedValue(c.getKorName(), true);
-                                                airportList.setSelectedValue(a.getKorName(), true);
-                                            }
-                                        }
-                                        if (str.equals(a.getAirCode1())) {
-                                            findKey = true;
-                                            continentList.setSelectedValue(element, true);
-                                            countryList.setSelectedValue(c.getKorName(), true);
-                                            airportList.setSelectedValue(a.getKorName(), true);
-                                        }
-                                        if (str.equals(a.getAirCode2())) {
-                                            findKey = true;
-                                            continentList.setSelectedValue(element, true);
-                                            countryList.setSelectedValue(c.getKorName(), true);
-                                            airportList.setSelectedValue(a.getKorName(), true);
-                                        }
-                                        if (str.equals(a.getCityName())) {
-                                            findKey = true;
-                                            continentList.setSelectedValue(element, true);
-                                            countryList.setSelectedValue(c.getKorName(), true);
-                                            airportList.setSelectedValue(a.getKorName(), true);
-                                        }
-                                        if (str.equals(a.getEngName())) {
-                                            findKey = true;
-                                            continentList.setSelectedValue(element, true);
-                                            countryList.setSelectedValue(c.getKorName(), true);
-                                            airportList.setSelectedValue(a.getKorName(), true);
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!findKey) {
-                    JOptionPane.showMessageDialog(null, str + "의 정보를 찾지 못했습니다.", "오류", JOptionPane.WARNING_MESSAGE);
-                }
+            if (!findKey[0] || s.equals((""))) {
+                if (s.equals("")) JOptionPane.showMessageDialog(null, "검색어를 입력하세요!", "오류", JOptionPane.WARNING_MESSAGE);
+                else JOptionPane.showMessageDialog(null, s + "의 정보를 찾지 못했습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+            } else {
+                countryList.countryName.removeAllElements();
+                countryList.setModel(countryResult);
+                airportList.airportName.removeAllElements();
+                airportList.setModel(airportResult);
             }
+
+
         }
+
     }
 
     class BottomPanel extends JPanel { //검색 하단 판넬
@@ -339,12 +303,11 @@ public class MainFrame extends JFrame { //메인 프레임
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
                 if (this.getSelectedValue() != null) {
                     String countryStr = this.getSelectedValue().toString();
-                    if (!ProjectMain.allCountry.get(countryStr).getMyContinent().equals(ProjectMain.getSelectedContinent())) {
-                        ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
-                        currentCont = ProjectMain.getSelectedContinent();
-                        continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(), true);
-                        countryList.setSelectedValue(countryStr, true);
-                    }
+
+                    ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
+                    currentCont = ProjectMain.getSelectedContinent();
+                    continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(), true);
+                    countryList.setSelectedValue(countryStr, true);
                     for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
                         if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
                             ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
@@ -413,13 +376,25 @@ public class MainFrame extends JFrame { //메인 프레임
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
                 JList<String> theList = (JList) mouseEvent.getSource();
-                if (mouseEvent.getClickCount() == 2) {
-                    int index = theList.locationToIndex(mouseEvent.getPoint());
-                    if (index >= 0) {
-                        clickAirportName = theList.getModel().getElementAt(index);
-                        ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
-                        currentAirport = ProjectMain.getSelectedAirport();
-                        showAirportInfo();
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if(airportList.getMaxSelectionIndex() != -1) {
+                    clickAirportName = theList.getModel().getElementAt(index);
+                    ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
+                    currentAirport = ProjectMain.getSelectedAirport();
+                    //현재 선택된 국가가 소속된 대륙과 나라 아이템이 클릭 된 것처럼 설정
+                    ProjectMain.setSelectedCountry(currentAirport.getMyCountry());
+                    ProjectMain.setSelectedContinent(ProjectMain.getSelectedCountry().getMyContinent());
+                    currentCont = ProjectMain.getSelectedContinent();
+                    currentCountry = ProjectMain.getSelectedCountry();
+                    continentList.setSelectedValue(currentCont.getName(), true);
+                    countryList.setSelectedValue(currentCountry.getKorName(), true);
+                    airportList.setSelectedValue(currentAirport.getKorName(), true);
+
+                    //더블 클릭 시 공항 정보 출력
+                    if (mouseEvent.getClickCount() == 2) {
+                        if (index >= 0) {
+                            showAirportInfo();
+                        }
                     }
                 }
             }

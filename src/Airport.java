@@ -23,5 +23,7 @@ public class Airport {
     public String getCityName(){ return this.city_name; }
     public String getAirCode1(){ return this.air_code1; }
     public String getAirCode2(){ return this.air_code2; }
+
+    public Country getMyCountry(){ return this.myCountry; }
     public Boolean isInternational() { return this.kor_name.contains("국제"); }
 }
