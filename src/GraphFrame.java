@@ -162,6 +162,7 @@ class RoundedButton extends JButton { //예쁜 버튼
     }
     @Override
     protected void paintComponent(Graphics g) {
+
         int width = getWidth();
         int height = getHeight();
 

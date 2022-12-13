@@ -35,11 +35,22 @@ public class ShowContinent extends JFrame {
         bg.setLayout(null);
 
         for (int i = 0; i < btnContinent.length; i++) {
-            btnContinent[i] = new JButton();
+            if(i == btnContinent.length - 1){
+                btnContinent[i] = new RoundedButton();
+            }
+            else{
+                btnContinent[i] = new JButton();
+
+            }
             btnContinent[i].setBounds(location[i][0], location[i][1], btnSize[i][0], btnSize[i][1]);
             if (i == btnContinent.length - 1) {
+                ImageIcon img = new ImageIcon("./image/graph.png");
+                btnContinent[i].setIcon(img);
+                btnContinent[i].setLocation(5,5);
+                btnContinent[i].setRolloverIcon(img);
+                btnContinent[i].setFont(new Font("고딕", Font.BOLD, 18));;
                 btnContinent[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                btnContinent[i].setBackground(Color.red);
+                btnContinent[i].setBackground(null);
                 btnContinent[i].setText(btnName[i]);
                 btnContinent[i].addActionListener(e -> {
                     GraphFrame gf = new GraphFrame();
