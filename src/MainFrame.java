@@ -1,5 +1,8 @@
 
+import javax.smartcardio.Card;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -49,6 +52,7 @@ public class MainFrame extends JFrame { //메인 프레임
         setLayout(null);
         setLocationRelativeTo(null);//창이 가운데 나오게
         setResizable(false);
+//        this.setComponentZOrder();
         //List 설정
         continentList = new ConList(ProjectMain.getSelectedContinent());
         countryList = new CountryList(ProjectMain.getSelectedContinent());
@@ -113,7 +117,8 @@ public class MainFrame extends JFrame { //메인 프레임
     class LookUpPanel extends JPanel { //검색, 정렬, 조회 통합 판넬
         public LookUpPanel(Continent c) {
             SearchPanel searchPanel = new SearchPanel();
-
+            searchPanel.setLocation(510, 5);
+            searchPanel.setSize(50, 50);
             add(searchPanel);
             InfoPanel infoPanel = new InfoPanel();
             add(infoPanel);
@@ -126,15 +131,39 @@ public class MainFrame extends JFrame { //메인 프레임
     class SearchPanel extends JPanel { //검색 판넬
         private HashMap<String, Continent> hm = ProjectMain.allContinent;
         private JTextField textField = new JTextField(20);
+
+        private DefaultListModel<String> model = new DefaultListModel<>();
+        private JList<String> searchList = new JList<>(model);
         private JButton btnSearch = new JButton("search");
 
         public SearchPanel() {
+            CardLayout cl = new CardLayout();
+            setLayout(cl);
+            textField.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    model.addElement(textField.getText());
+                    cl.show(searchList,"1");
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+
+                }
+            });
             textField.addActionListener(e -> { //텍스트 필드 엔터쳤을때 액션함수
                 searchInfo();
             });
             btnSearch.addActionListener(e -> { //버튼 클릭 액션함수
                 searchInfo();
             });
+            searchList.setLocation(530, 15);
+            add(searchList);
             add(textField);
             add(btnSearch);
         }
