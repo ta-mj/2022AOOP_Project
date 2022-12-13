@@ -61,6 +61,16 @@ public class ProjectMain extends JFrame {
 
     public static void main(String[] args) throws SQLException {
         getData();
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception e) {
+    /*
+        ClassNotFoundException
+        InstantiationException
+        IllegalAccessException
+        UnsupportedLookAndFeelException
+     */
+        }
         new ShowContinent();
     }
 }
