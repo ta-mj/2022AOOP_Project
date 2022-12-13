@@ -20,6 +20,7 @@ public class MainFrame extends JFrame { //메인 프레임
     JRadioButton interRBtn = new JRadioButton("국제");
     JRadioButton domRBtn = new JRadioButton("국내");
 
+
     //국제 / 국내 공항 radio 버튼 관련 상수
     private final int all = 0;
     private final int international = 1;
@@ -162,13 +163,39 @@ public class MainFrame extends JFrame { //메인 프레임
                                 if (hm.get(element).getmyCountry(c) != null) {
                                     for (Airport a : hm.get(element).getmyCountry(c).getAllAirport()) { // 공항 코드 등 정보 입력했을 때도 if문 나눠서 검색가능
                                         if (findKey) break;
-                                        if (str.equals(a.getKorName())) {
+                                        if (str.contains(a.getKorName())) {
+                                            if (str.equals(a.getKorName())) {
+                                                findKey = true;
+                                                continentList.setSelectedValue(element, true);
+                                                countryList.setSelectedValue(c.getKorName(), true);
+                                                airportList.setSelectedValue(a.getKorName(), true);
+                                            }
+                                        }
+                                        if (str.equals(a.getAirCode1())) {
                                             findKey = true;
-                                            //공항 선택된다는 가정
                                             continentList.setSelectedValue(element, true);
                                             countryList.setSelectedValue(c.getKorName(), true);
-                                            airportList.setSelectedValue(str, true);
+                                            airportList.setSelectedValue(a.getKorName(), true);
                                         }
+                                        if (str.equals(a.getAirCode2())) {
+                                            findKey = true;
+                                            continentList.setSelectedValue(element, true);
+                                            countryList.setSelectedValue(c.getKorName(), true);
+                                            airportList.setSelectedValue(a.getKorName(), true);
+                                        }
+                                        if (str.equals(a.getCityName())) {
+                                            findKey = true;
+                                            continentList.setSelectedValue(element, true);
+                                            countryList.setSelectedValue(c.getKorName(), true);
+                                            airportList.setSelectedValue(a.getKorName(), true);
+                                        }
+                                        if (str.equals(a.getEngName())) {
+                                            findKey = true;
+                                            continentList.setSelectedValue(element, true);
+                                            countryList.setSelectedValue(c.getKorName(), true);
+                                            airportList.setSelectedValue(a.getKorName(), true);
+                                        }
+
                                     }
                                 }
                             }
@@ -320,6 +347,7 @@ public class MainFrame extends JFrame { //메인 프레임
 //            final Boolean[] isClicked = {true};
 
         }
+
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
                 JList<String> theList = (JList) mouseEvent.getSource();
@@ -353,15 +381,18 @@ public class MainFrame extends JFrame { //메인 프레임
             allRBtn.addItemListener(new RadioButtonListener());
             interRBtn.addItemListener(new RadioButtonListener());
             domRBtn.addItemListener(new RadioButtonListener());
+
             allRBtn.setSelected(true); //전체 버튼 default check
             rGroup.add(allRBtn);
             rGroup.add(interRBtn);
             rGroup.add(domRBtn);
+
             add(allRBtn);
             add(interRBtn);
             add(domRBtn);
 
         }
+
         class RadioButtonListener implements ItemListener {
 
             @Override
@@ -383,7 +414,6 @@ public class MainFrame extends JFrame { //메인 프레임
         }
         //그룹에 그룹화시킬 버튼들을 추가
     }
-
 
 
 }
