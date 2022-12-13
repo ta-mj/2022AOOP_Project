@@ -294,12 +294,10 @@ public class MainFrame extends JFrame { //메인 프레임
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
                 if (this.getSelectedValue() != null) {
                     String countryStr = this.getSelectedValue().toString();
-                    if(!ProjectMain.allCountry.get(countryStr).getMyContinent().equals(ProjectMain.getSelectedContinent())){
-                        ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
-                        currentCont = ProjectMain.getSelectedContinent();
-                        continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(),true);
-                        countryList.setSelectedValue(countryStr,true);
-                    }
+                    ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
+                    currentCont = ProjectMain.getSelectedContinent();
+                    continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(),true);
+                    countryList.setSelectedValue(countryStr,true);
                     for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
                         if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
                             ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
@@ -367,12 +365,22 @@ public class MainFrame extends JFrame { //메인 프레임
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
                 JList<String> theList = (JList) mouseEvent.getSource();
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                clickAirportName = theList.getModel().getElementAt(index);
+                ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
+                currentAirport = ProjectMain.getSelectedAirport();
+                //현재 선택된 국가가 소속된 대륙과 나라 아이템이 클릭 된 것처럼 설정
+                ProjectMain.setSelectedCountry(currentAirport.getMyCountry());
+                ProjectMain.setSelectedContinent(ProjectMain.getSelectedCountry().getMyContinent());
+                currentCont = ProjectMain.getSelectedContinent();
+                currentCountry = ProjectMain.getSelectedCountry();
+                continentList.setSelectedValue(currentCont.getName(),true);
+                countryList.setSelectedValue(currentCountry.getKorName(),true);
+                airportList.setSelectedValue(currentAirport.getKorName(),true);
+                
+                //더블 클릭 시 공항 정보 출력
                 if (mouseEvent.getClickCount() == 2) {
-                    int index = theList.locationToIndex(mouseEvent.getPoint());
                     if (index >= 0) {
-                        clickAirportName = theList.getModel().getElementAt(index);
-                        ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
-                        currentAirport = ProjectMain.getSelectedAirport();
                         showAirportInfo();
                     }
                 }
