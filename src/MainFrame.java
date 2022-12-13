@@ -129,13 +129,48 @@ public class MainFrame extends JFrame { //메인 프레임
 
         public SearchPanel() {
             textField.addActionListener(e -> { //텍스트 필드 엔터쳤을때 액션함수
-                searchInfo();
+                totalSearch(textField.getText());
+                //searchInfo();
             });
             btnSearch.addActionListener(e -> { //버튼 클릭 액션함수
-                searchInfo();
+                totalSearch(textField.getText());
+                //searchInfo();
             });
             add(textField);
             add(btnSearch);
+        }
+        public void totalSearch(String s){
+            DefaultListModel<String> continentResult = new DefaultListModel<>();
+            DefaultListModel<String> countryResult = new DefaultListModel<>();
+            DefaultListModel<String> airportResult = new DefaultListModel<>();
+            ProjectMain.allContinent.forEach((key,value)->{
+                Continent c = value;
+                if(c.getName().contains(s)){
+                    System.out.println(c.getName());
+                    continentResult.addElement(c.getName());
+                }
+                for(int i = 0 ; i < c.getNumCountry() ; i++){
+                    Country country = c.getOneCountry(i);
+                    if(country.getKorName().contains(s) || country.getEngName().contains(s)){
+                        System.out.println(country.getKorName());
+                        countryResult.addElement(country.getKorName());
+                    }
+                    for(int j = 0 ; j < country.getNumAirport() ; j++){
+                        Airport airport = country.getOneAirport(j);
+                        if(airport.getKorName().contains(s)||airport.getEngName().contains(s)||
+                                airport.getCityName().equals(s) ||airport.getAirCode1().equals(s)||
+                                airport.getAirCode2().equals(s)){
+                            System.out.println(airport.getKorName());
+                            airportResult.addElement(airport.getKorName());
+                        }
+                    }
+                }
+            });
+            countryList.countryName.removeAllElements();
+            countryList.setModel(countryResult);
+            airportList.airportName.removeAllElements();
+            airportList.setModel(airportResult);
+
         }
 
         private void searchInfo() {
@@ -236,6 +271,9 @@ public class MainFrame extends JFrame { //메인 프레임
                 currentCont = ProjectMain.getSelectedContinent();
                 continentImagePanel.repaint();
                 countryList.setCountryList(currentCont);
+                airportList.airportName.removeAllElements();
+                ProjectMain.setSelectedCountry(null);
+                ProjectMain.setSelectedAirport(null);
             }
         }
     }
@@ -256,6 +294,12 @@ public class MainFrame extends JFrame { //메인 프레임
             if (!e.getValueIsAdjusting()) {    //이거 없으면 mouse 눌릴때, 뗄때 각각 한번씩 호출되서 총 두번 호출
                 if (this.getSelectedValue() != null) {
                     String countryStr = this.getSelectedValue().toString();
+                    if(!ProjectMain.allCountry.get(countryStr).getMyContinent().equals(ProjectMain.getSelectedContinent())){
+                        ProjectMain.setSelectedContinent(ProjectMain.allCountry.get(countryStr).getMyContinent());
+                        currentCont = ProjectMain.getSelectedContinent();
+                        continentList.setSelectedValue(ProjectMain.getSelectedContinent().getName(),true);
+                        countryList.setSelectedValue(countryStr,true);
+                    }
                     for (int i = 0; i < ProjectMain.getSelectedContinent().getAllCountries().size(); i++) {
                         if (ProjectMain.getSelectedContinent().getOneCountry(i).getKorName().equals(countryStr)) {
                             ProjectMain.setSelectedCountry(ProjectMain.getSelectedContinent().getOneCountry(i));
