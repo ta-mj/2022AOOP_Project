@@ -149,13 +149,14 @@ public class MainFrame extends JFrame { //메인 프레임
 
         public void totalSearch(String s) {
             final boolean[] findKey = {false};
+            final boolean[] equalKey = {false};
             DefaultListModel<String> continentResult = new DefaultListModel<>();
             DefaultListModel<String> countryResult = new DefaultListModel<>();
             DefaultListModel<String> airportResult = new DefaultListModel<>();
 
 
             ProjectMain.allContinent.forEach((key, value) -> {
-                if(s.equals("")) return;
+                if (s.equals("")) return;
                 Continent c = value;
                 String[] countryArr;
                 if (c.getName().equals(s)) {
@@ -178,8 +179,18 @@ public class MainFrame extends JFrame { //메인 프레임
                         findKey[0] = true;
                         System.out.println(country.getKorName());
                         if (country.getKorName().equals(s) || country.getEngName().equals(s)) {
+                            equalKey[0] = true;
+                            countryArr = new String[country.getMyContinent().getNumCountry()];
+                            for (int j = 0; j < country.getMyContinent().getNumCountry(); j++) {
+                                countryArr[j] = country.getMyContinent().getOneCountry(j).getKorName();
+                            }
+                            Arrays.sort(countryArr);
+                            for (int j = 0; j < countryArr.length; j++) {
+                                countryResult.addElement(countryArr[j]);
+                            }
                             continentList.setSelectedValue(country.getMyContinent().getName(), true);
                             countryList.setSelectedValue(country.getKorName(), true);
+                            return;
                         }
 
                         countryResult.addElement(country.getKorName());
@@ -191,10 +202,9 @@ public class MainFrame extends JFrame { //메인 프레임
                                 airport.getAirCode2().equals(s)) {
                             findKey[0] = true;
                             if (airport.getKorName().equals(s)) {
+                                equalKey[0] = true;
                                 countryArr = new String[airport.getMyCountry().getMyContinent().getNumCountry()];
-                                continentList.setSelectedValue(airport.getMyCountry().getMyContinent().getName(), true);
-                                countryList.setSelectedValue(airport.getMyCountry().getKorName(), true);
-                                airportList.setSelectedValue(airport.getKorName(), true);
+
                                 for (int k = 0; k < countryArr.length; k++) {
                                     countryArr[k] = c.getOneCountry(k).getKorName();
                                 }
@@ -202,6 +212,11 @@ public class MainFrame extends JFrame { //메인 프레임
                                 for (int k = 0; k < countryArr.length; k++) {
                                     countryResult.addElement(countryArr[k]);
                                 }
+                                airportResult.addElement(airport.getKorName());
+                                continentList.setSelectedValue(airport.getMyCountry().getMyContinent().getName(), true);
+                                countryList.setSelectedValue(airport.getMyCountry().getKorName(), true);
+                                airportList.setSelectedValue(airport.getKorName(), true);
+                                return;
                             }
                             System.out.println(airport.getKorName());
                             airportResult.addElement(airport.getKorName());
@@ -211,6 +226,7 @@ public class MainFrame extends JFrame { //메인 프레임
                     }
                 }
             });
+            if (equalKey[0]) return;
             if (!findKey[0] || s.equals((""))) {
                 if (s.equals("")) JOptionPane.showMessageDialog(null, "검색어를 입력하세요!", "오류", JOptionPane.WARNING_MESSAGE);
                 else JOptionPane.showMessageDialog(null, s + "의 정보를 찾지 못했습니다.", "오류", JOptionPane.WARNING_MESSAGE);
@@ -337,8 +353,11 @@ public class MainFrame extends JFrame { //메인 프레임
     }
 
     class AirportList extends JList {
+        DefaultListModel<String> countryModel = new DefaultListModel<>();
+
         DefaultListModel<String> airportName;
         private String clickAirportName;
+        private String[] countryArr;
 
         public AirportList() {
             super();
@@ -377,7 +396,8 @@ public class MainFrame extends JFrame { //메인 프레임
             public void mouseClicked(MouseEvent mouseEvent) {
                 JList<String> theList = (JList) mouseEvent.getSource();
                 int index = theList.locationToIndex(mouseEvent.getPoint());
-                if(airportList.getMaxSelectionIndex() != -1) {
+
+                if (airportList.getMaxSelectionIndex() != -1) {
                     clickAirportName = theList.getModel().getElementAt(index);
                     ProjectMain.setSelectedAirport(ProjectMain.getAirport(clickAirportName));
                     currentAirport = ProjectMain.getSelectedAirport();
@@ -386,6 +406,15 @@ public class MainFrame extends JFrame { //메인 프레임
                     ProjectMain.setSelectedContinent(ProjectMain.getSelectedCountry().getMyContinent());
                     currentCont = ProjectMain.getSelectedContinent();
                     currentCountry = ProjectMain.getSelectedCountry();
+                    countryArr = new String[currentCont.getNumCountry()];
+                    for(int i=0;i<currentCont.getNumCountry();i++){
+                        countryArr[i] = currentCont.getOneCountry(i).getKorName();
+                    }
+                    Arrays.sort(countryArr);
+                    for(int i=0;i<countryArr.length;i++){
+                        countryModel.addElement(countryArr[i]);
+                    }
+                    countryList.setModel(countryModel);
                     continentList.setSelectedValue(currentCont.getName(), true);
                     countryList.setSelectedValue(currentCountry.getKorName(), true);
                     airportList.setSelectedValue(currentAirport.getKorName(), true);
